@@ -12,5 +12,5 @@ make `.env`
 
 ```coneole
 # WebSocket URL for production
-VITE_WS_URL=ws://localhost:8080
+VITE_HOST_URL=localhost
 ```

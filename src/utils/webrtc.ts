@@ -1,6 +1,6 @@
 import EventEmitter from 'eventemitter3';
 
-const WS_URL = import.meta.env.VITE_WS_URL;
+const WS_URL = 'ws://' + import.meta.env.VITE_HOST_URL + ':8080';
 
 interface PeerInfo {
   role: 'MASTER' | 'VIEWER';
