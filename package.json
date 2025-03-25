@@ -1,0 +1,28 @@
+{
+    "name": "webrtc-kvs-streaming",
+    "version": "1.0.0",
+    "private": true,
+    "dependencies": {
+        "@aws-sdk/client-kinesis-video": "^3.0.0",
+        "@aws-sdk/client-kinesis-video-signaling": "^3.0.0",
+        "@types/react": "^18.2.0",
+        "@types/react-dom": "^18.2.0",
+        "@vitejs/plugin-react": "^4.0.0",
+        "amazon-kinesis-video-streams-webrtc": "^2.0.0",
+        "eventemitter3": "^5.0.1",
+        "react": "^18.2.0",
+        "react-dom": "^18.2.0",
+        "react-router-dom": "^7.4.0",
+        "typescript": "^4.9.5",
+        "vite": "^5.0.0",
+        "ws": "^8.18.1"
+    },
+    "scripts": {
+        "dev": "vite",
+        "build": "tsc && vite build",
+        "preview": "vite preview"
+    },
+    "devDependencies": {
+        "@types/node": "^22.13.13"
+    }
+}
