@@ -1,7 +1,6 @@
 import EventEmitter from 'eventemitter3';
 
-// シグナリングサーバーの代わりにWebSocketを使用
-const WS_URL = 'ws://localhost:8080';
+const WS_URL = import.meta.env.VITE_WS_URL;
 
 interface PeerInfo {
   role: 'MASTER' | 'VIEWER';
