@@ -59,33 +59,38 @@ const ViewerApp: React.FC = () => {
 
   useEffect(() => {
     // ViewerとしてWebRTCClientを初期化
-    webrtcClientRef.current = new WebRTCClient('VIEWER');
+    if (!webrtcClientRef.current) {
+      webrtcClientRef.current = new WebRTCClient('VIEWER');
 
-    // ストリーム受信時のハンドラを設定
-    webrtcClientRef.current.onStream((stream, peerId) => {
-      console.log('Received remote stream:', stream, 'from peer:', peerId);
-      setRemoteStreams((prev) => {
-        const newStreams = new Map(prev);
-        newStreams.set(peerId, stream);
-        return newStreams;
+      // ストリーム受信時のハンドラを設定
+      webrtcClientRef.current.onStream((stream, peerId) => {
+        console.log('Received remote stream:', stream, 'from peer:', peerId);
+        setRemoteStreams((prev) => {
+          const newStreams = new Map(prev);
+          newStreams.set(peerId, stream);
+          return newStreams;
+        });
       });
-    });
 
-    // ストリーム削除時のハンドラを設定
-    webrtcClientRef.current.onStreamRemoved((peerId) => {
-      console.log('Stream removed for peer:', peerId);
-      setRemoteStreams((prev) => {
-        const newStreams = new Map(prev);
-        newStreams.delete(peerId);
-        return newStreams;
+      // ストリーム削除時のハンドラを設定
+      webrtcClientRef.current.onStreamRemoved((peerId) => {
+        console.log('Stream removed for peer:', peerId);
+        setRemoteStreams((prev) => {
+          const newStreams = new Map(prev);
+          newStreams.delete(peerId);
+          return newStreams;
+        });
       });
-    });
+    }
 
     // クリーンアップ
     return () => {
-      webrtcClientRef.current?.disconnect();
+      if (webrtcClientRef.current) {
+        webrtcClientRef.current.disconnect();
+        webrtcClientRef.current = null;
+      }
     };
-  }, []);
+  }, []); // 依存配列を空に
 
   const connectToStream = async () => {
     try {
@@ -106,13 +111,6 @@ const ViewerApp: React.FC = () => {
     }
   };
 
-  const disconnectFromStream = () => {
-    webrtcClientRef.current?.disconnect();
-    setRemoteStreams(new Map());
-    setIsConnected(false);
-    setConnectionStatus('disconnected');
-  };
-
   const handleToggleMaximize = (peerId: string) => {
     setMaximizedPeerId((currentPeerId) =>
       currentPeerId === peerId ? null : peerId
@@ -125,14 +123,19 @@ const ViewerApp: React.FC = () => {
         <h1>WebRTC Stream Viewer</h1>
         <div className="controls">
           <button
-            onClick={isConnected ? disconnectFromStream : connectToStream}
-            disabled={connectionStatus === 'connecting'}
+            onClick={connectToStream}
+            disabled={isConnected || connectionStatus === 'connecting'}
           >
-            {isConnected ? 'Disconnect' : 'Connect to Stream'}
+            Connect to Stream
           </button>
           <span className={`status ${connectionStatus}`}>
             Status: {connectionStatus}
           </span>
+          {isConnected && (
+            <span className="reload-hint">
+              (ページをリロードして接続をリセット)
+            </span>
+          )}
         </div>
       </header>
       <div
@@ -262,6 +265,11 @@ const ViewerApp: React.FC = () => {
         .maximize-hint {
           font-size: 0.9em;
           opacity: 0.8;
+        }
+        .reload-hint {
+          color: #666;
+          font-size: 0.9em;
+          font-style: italic;
         }
       `}</style>
     </div>
